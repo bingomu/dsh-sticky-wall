@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>便签墙 · 设计稿</title>
+<style>
+  :root {
+    --app-bg: #FBF8F1;
+    --chrome-text: #423B30;
+    --chrome-muted: #8C8375;
+    --chrome-faint: #A79E8E;
+    --search-bg: #FFFFFF;
+    --search-border: #E7E0D2;
+    --rule: #EDE7DA;
+    --hover-bg: rgba(40, 30, 12, .08);
+    --chip-bg: #F3ECDB;
+    --chip-border: #DFD3BB;
+    --chip-text: #3F3520;
+  }
+  body.dark {
+    --app-bg: #1B1C1F;
+    --chrome-text: #EDE9E1;
+    --chrome-muted: #A39D92;
+    --chrome-faint: #7E796F;
+    --search-bg: #26272B;
+    --search-border: #34363B;
+    --rule: #2E3034;
+    --hover-bg: rgba(255, 255, 255, .08);
+    --chip-bg: #2A2B30;
+    --chip-border: #3A3C42;
+    --chip-text: #EDE9E1;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--app-bg);
+    color: var(--chrome-text);
+    font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page {
+    min-height: 100vh;
+    padding: 34px 46px 46px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .inner { width: 100%; max-width: 1000px; }
+
+  /* header */
+  .top { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; margin-bottom: 18px; }
+  .heading h1 { margin: 0; font-size: 20px; line-height: 1.3; font-weight: 600; letter-spacing: .01em; }
+  .heading p { margin: 5px 0 0; font-size: 12px; line-height: 1.5; color: var(--chrome-muted); }
+  .topright { display: flex; align-items: center; gap: 12px; padding-top: 3px; }
+  .count { font-size: 11.5px; color: var(--chrome-muted); opacity: .9; white-space: nowrap; }
+  .search {
+    display: flex; align-items: center; gap: 7px;
+    height: 32px; padding: 0 12px 0 10px; border-radius: 9px;
+    background: var(--search-bg); border: 1px solid var(--search-border);
+    color: var(--chrome-faint); font-size: 12px; min-width: 190px;
+  }
+  .search svg { flex: none; opacity: .85; }
+
+  /* composer */
+  .composer {
+    position: relative; border-radius: 20px; background: #FDE8A9; color: #3F3520;
+    padding: 17px 20px 13px;
+    box-shadow: 0 1px 0 rgba(63,53,32,.05), 0 16px 34px rgba(63,53,32,.10);
+  }
+  .composer .placeholder {
+    min-height: 74px; font-size: 15px; line-height: 1.6; color: #8A7434;
+    display: flex; align-items: flex-start; padding-top: 2px;
+  }
+  .composer .bar { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+  .swatches { display: flex; align-items: center; gap: 7px; }
+  .swatch {
+    width: 15px; height: 15px; border-radius: 50%;
+    border: 1px solid rgba(63,53,32,.16);
+  }
+  .swatch.selected {
+    box-shadow: 0 0 0 2px #FDE8A9, 0 0 0 3.5px rgba(63,53,32,.55);
+  }
+  .category { font-size: 10.5px; font-weight: 600; letter-spacing: .1em; color: #8A7434; opacity: .9; }
+  .spacer { flex: 1; }
+  .hint { font-size: 10.5px; color: #8A7434; opacity: .95; white-space: nowrap; }
+  .add {
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 34px; padding: 0 17px; border-radius: 999px;
+    background: #6B5327; color: #FFF7E6;
+    font-size: 12px; font-weight: 600; letter-spacing: .01em;
+  }
+
+  /* 分类 chips + 时间分区 */
+  .chips { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 18px; }
+  .chip { display: inline-flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px;
+    border-radius: 999px; border: 1px solid var(--search-border); background: transparent;
+    color: var(--chrome-muted); font: inherit; font-size: 11.5px; }
+  .chip.active { background: var(--chip-bg); border-color: var(--chip-border); color: var(--chip-text); }
+  .chip .count { font-size: 10.5px; opacity: .65; }
+  .section-head { display: flex; align-items: center; gap: 8px; margin: 26px 3px 10px; }
+  .section-label { font-size: 10px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--chrome-muted); }
+  .section-count { font-size: 10.5px; color: var(--chrome-muted); opacity: .6; }
+
+  /* 待办 */
+  .todo-toggle { display: inline-flex; align-items: center; gap: 5px; height: 22px; padding: 0 8px;
+    border-radius: 6px; border: 1px solid rgba(63,53,32,.22); color: #6B5327;
+    font-size: 10.5px; font-weight: 600; }
+  .kicker-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .kicker-row .kickerline { margin-bottom: 0; min-height: 0; }
+  .progress { margin-left: auto; font-size: 9px; font-weight: 600; letter-spacing: .08em; color: var(--soft); }
+  .note-todos { display: flex; flex-direction: column; gap: 5px; flex: 1 1 auto; margin-bottom: 12px; }
+  .note-todo { display: flex; align-items: flex-start; gap: 8px; }
+  .note-check { flex: none; display: grid; place-items: center; width: 15px; height: 15px; margin-top: 2px;
+    border-radius: 4px; border: 1.4px solid var(--soft); color: transparent; }
+  .note-check.is-checked { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  .todo-text { flex: 1; font-size: 14px; font-weight: 500; line-height: 1.4; }
+  .todo-text.is-done { opacity: .5; text-decoration: line-through; }
+
+  /* wall */
+  .wall {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    margin-top: 0;
+    align-items: start;
+  }
+  .note {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 156px;
+    border-radius: 16px;
+    background: var(--paper);
+    color: var(--ink);
+    padding: 16px 18px 14px;
+    box-shadow: 0 1px 2px rgba(35, 27, 12, .05), 0 3px 10px rgba(35, 27, 12, .035);
+    transform: translateY(var(--y, 0px)) rotate(var(--rot, 0deg));
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .note:hover,
+  .note:focus-within {
+    transform: translateY(-2px) rotate(0deg);
+    box-shadow: 0 12px 26px rgba(35, 27, 12, .11), 0 2px 5px rgba(35, 27, 12, .05);
+  }
+  .kickerline {
+    font-size: 9.5px; font-weight: 700; letter-spacing: .13em;
+    text-transform: uppercase; color: var(--soft);
+    margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .body { flex: 1 1 auto; font-size: 14.5px; font-weight: 500; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; margin: 0 0 14px; }
+  .foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .time { font-size: 9px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--soft); opacity: .9; }
+  .actions { display: flex; align-items: center; gap: 2px; opacity: .5; }
+  .actions svg { display: block; }
+  .note.pinned .actions { opacity: 1; }
+  .note.pinned .pin { color: var(--ink); opacity: 1; }
+
+  .t-amber  { --paper: #FDE8A9; --ink: #3F3520; --soft: #8A7434; }
+  .t-peach  { --paper: #FBD7B2; --ink: #402F1D; --soft: #91703F; }
+  .t-rose   { --paper: #F8C9D1; --ink: #40252B; --soft: #9A5C68; }
+  .t-coral  { --paper: #F6C0B8; --ink: #402420; --soft: #9C5A50; }
+  .t-sky    { --paper: #BBD9F6; --ink: #1F3245; --soft: #4F7195; }
+  .t-mint   { --paper: #C1E8E3; --ink: #1E3A36; --soft: #3F7A73; }
+  .t-lime   { --paper: #DDEAB0; --ink: #30381C; --soft: #6E7A3E; }
+  .t-violet { --paper: #DAD2F7; --ink: #2D2645; --soft: #6A5C9B; }
+  .t-plain  { --paper: #F0E1BF; --ink: #3A342B; --soft: #8A7A5E; }
+
+  /* swatch fills */
+  .s-amber  { background: #FDE8A9; }
+  .s-peach  { background: #FBD7B2; }
+  .s-rose   { background: #F8C9D1; }
+  .s-coral  { background: #F6C0B8; }
+  .s-sky    { background: #BBD9F6; }
+  .s-mint   { background: #C1E8E3; }
+  .s-lime   { background: #DDEAB0; }
+  .s-violet { background: #DAD2F7; }
+  .s-plain  { background: #F0E1BF; }
+
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="inner">
+    <div class="top">
+      <div class="heading">
+        <h1>便签墙</h1>
+        <p>记下每个想法，自动保存在本机</p>
+      </div>
+      <div class="topright">
+        <div class="search">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+            <circle cx="7" cy="7" r="4.3"/><path d="M10.3 10.3 14 14"/>
+          </svg>
+          <span>搜索便签</span>
+        </div>
+        <span class="count">12 张便签</span>
+      </div>
+    </div>
+
+    <section class="composer">
+      <div class="placeholder">记下你的下一个想法…</div>
+      <div class="bar">
+        <div class="swatches">
+          <span class="swatch s-amber selected" title="暖黄"></span>
+          <span class="swatch s-peach" title="蜜桃橙"></span>
+          <span class="swatch s-rose" title="樱花粉"></span>
+          <span class="swatch s-coral" title="珊瑚红"></span>
+          <span class="swatch s-sky" title="天蓝"></span>
+          <span class="swatch s-mint" title="薄荷绿"></span>
+          <span class="swatch s-lime" title="嫩绿"></span>
+          <span class="swatch s-violet" title="淡紫"></span>
+          <span class="swatch s-plain" title="米白"></span>
+        </div>
+        <span class="todo-toggle">
+          <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2.4" y="2.4" width="11.2" height="11.2" rx="2.4"/><path d="M5.2 8.2 7.1 10 10.9 5.9"/></svg>
+          待办
+        </span>
+        <span class="category">分类（可选）</span>
+        <span class="spacer"></span>
+        <span class="hint">⌘/Ctrl + Enter</span>
+        <span class="add">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg>
+          贴上墙
+        </span>
+      </div>
+    </section>
+
+    <div class="chips">
+      <span class="chip active">全部 <span class="count">12</span></span>
+      <span class="chip">产品想法 <span class="count">3</span></span>
+      <span class="chip">个人 <span class="count">2</span></span>
+      <span class="chip">灵感 <span class="count">2</span></span>
+      <span class="chip">下一个插件 <span class="count">1</span></span>
+      <span class="chip">阅读 <span class="count">1</span></span>
+      <span class="chip">待办 <span class="count">1</span></span>
+      <span class="chip">旅行 <span class="count">1</span></span>
+      <span class="chip">摘录 <span class="count">1</span></span>
+    </div>
+
+    <div class="section-head">
+      <span class="section-label">今天</span>
+      <span class="section-count">12</span>
+    </div>
+
+    <div class="wall">
+      <article class="note t-amber pinned">
+        <div class="kickerline">产品想法</div>
+        <p class="body">如果想法都有一个落脚点？不用打开文档，也不用想放在哪。</p>
+        <div class="foot">
+          <span class="time">刚刚</span>
+          <span class="actions">
+            <svg class="pin" width="13" height="13" viewBox="0 0 16 16" fill="currentColor" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.7 2.2 13.8 6.3l-1.6.5-2.2 2.2-.4 2.6-4.9-4.9 2.6-.4 2.2-2.2z"/><path d="m5.6 10.4-3.3 3.3" fill="none"/></svg>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.4c3.1 0 5.6 2.2 5.6 4.9 0 1.4-1.1 2.3-2.5 2.3H9.9c-.8 0-1.4.6-1.4 1.4 0 .4.1.6.1 1 0 .9-.7 1.4-1.6 1.4-3 0-5-2.4-5-5.2S4.9 2.4 8 2.4Z"/><circle cx="5.9" cy="7.1" r=".75" fill="currentColor" stroke="none"/><circle cx="8.4" cy="5.4" r=".75" fill="currentColor" stroke="none"/><circle cx="10.9" cy="7.1" r=".75" fill="currentColor" stroke="none"/></svg>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.9 4.3h10.2"/><path d="M6.3 4.3V2.9h3.4v1.4"/><path d="M4.4 4.3l.6 8.2c0 .5.4.9.9.9h3.2c.5 0 .9-.4.9-.9l.6-8.2"/></svg>
+          </span>
+        </div>
+      </article>
+
+      <article class="note t-mint">
+        <div class="kickerline">个人</div>
+        <p class="body">试试一个更安静的早晨：七点起床，先不看手机。</p>
+        <div class="foot">
+          <span class="time">3 分钟前</span>
+          <span class="actions">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.7 2.2 13.8 6.3l-1.6.5-2.2 2.2-.4 2.6-4.9-4.9 2.6-.4 2.2-2.2z"/><path d="m5.6 10.4-3.3 3.3"/></svg>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.4c3.1 0 5.6 2.2 5.6 4.9 0 1.4-1.1 2.3-2.5 2.3H9.9c-.8 0-1.4.6-1.4 1.4 0 .4.1.6.1 1 0 .9-.7 1.4-1.6 1.4-3 0-5-2.4-5-5.2S4.9 2.4 8 2.4Z"/><circle cx="5.9" cy="7.1" r=".75" fill="currentColor" stroke="none"/><circle cx="8.4" cy="5.4" r=".75" fill="currentColor" stroke="none"/><circle cx="10.9" cy="7.1" r=".75" fill="currentColor" stroke="none"/></svg>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.9 4.3h10.2"/><path d="M6.3 4.3V2.9h3.4v1.4"/><path d="M4.4 4.3l.6 8.2c0 .5.4.9.9.9h3.2c.5 0 .9-.4.9-.9l.6-8.2"/></svg>
+          </span>
+        </div>
+      </article>
+
+      <article class="note t-violet">
+        <div class="kickerline">下一个插件</div>
+        <p class="body">一键完成日常工作的工具。</p>
+        <div class="foot">
+          <span class="time">8 分钟前</span>
+          <span class="actions">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.7 2.2 13.8 6.3l-1.6.5-2.2 2.2-.4 2.6-4.9-4.9 2.6-.4 2.2-2.2z"/><path d="m5.6 10.4-3.3 3.3"/></svg>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.4c3.1 0 5.6 2.2 5.6 4.9 0 1.4-1.1 2.3-2.5 2.3H9.9c-.8 0-1.4.6-1.4 1.4 0 .4.1.6.1 1 0 .9-.7 1.4-1.6 1.4-3 0-5-2.4-5-5.2S4.9 2.4 8 2.4Z"/><circle cx="5.9" cy="7.1" r=".75" fill="currentColor" stroke="none"/><circle cx="8.4" cy="5.4" r=".75" fill="currentColor" stroke="none"/><circle cx="10.9" cy="7.1" r=".75" fill="currentColor" stroke="none"/></svg>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.9 4.3h10.2"/><path d="M6.3 4.3V2.9h3.4v1.4"/><path d="M4.4 4.3l.6 8.2c0 .5.4.9.9.9h3.2c.5 0 .9-.4.9-.9l.6-8.2"/></svg>
+          </span>
+        </div>
+      </article>
+
+      <article class="note t-sky">
+        <div class="kickerline">阅读</div>
+        <p class="body">《设计中的设计》第三章：留白不是空的，是让视线有地方停。</p>
+        <div class="foot">
+          <span class="time">12 分钟前</span>
+          <span class="actions">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.7 2.2 13.8 6.3l-1.6.5-2.2 2.2-.4 2.6-4.9-4.9 2.6-.4 2.2-2.2z"/><path d="m5.6 10.4-3.3 3.3"/></svg>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.4c3.1 0 5.6 2.2 5.6 4.9 0 1.4-1.1 2.3-2.5 2.3H9.9c-.8 0-1.4.6-1.4 1.4 0 .4.1.6.1 1 0 .9-.7 1.4-1.6 1.4-3 0-5-2.4-5-5.2S4.9 2.4 8 2.4Z"/><circle cx="5.9" cy="7.1" r=".75" fill="currentColor" stroke="none"/><circle cx="8.4" cy="5.4" r=".75" fill="currentColor" stroke="none"/><circle cx="10.9" cy="7.1" r=".75" fill="currentColor" stroke="none"/></svg>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.9 4.3h10.2"/><path d="M6.3 4.3V2.9h3.4v1.4"/><path d="M4.4 4.3l.6 8.2c0 .5.4.9.9.9h3.2c.5 0 .9-.4.9-.9l.6-8.2"/></svg>
+          </span>
+        </div>
+      </article>
+
+      <article class="note t-peach">
+        <div class="kickerline">产品想法</div>
+        <p class="body">便签要能被 agent 读到——在对话里说「记到便签墙」，它就该出现在这里。</p>
+        <div class="foot">
+          <span class="time">20 分钟前</span>
+          <span class="actions">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.7 2.2 13.8 6.3l-1.6.5-2.2 2.2-.4 2.6-4.9-4.9 2.6-.4 2.2-2.2z"/><path d="m5.6 10.4-3.3 3.3"/></svg>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.4c3.1 0 5.6 2.2 5.6 4.9 0 1.4-1.1 2.3-2.5 2.3H9.9c-.8 0-1.4.6-1.4 1.4 0 .4.1.6.1 1 0 .9-.7 1.4-1.6 1.4-3 0-5-2.4-5-5.2S4.9 2.4 8 2.4Z"/><circle cx="5.9" cy="7.1" r=".75" fill="currentColor" stroke="none"/><circle cx="8.4" cy="5.4" r=".75" fill="currentColor" stroke="none"/><circle cx="10.9" cy="7.1" r=".75" fill="currentColor" stroke="none"/></svg>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.9 4.3h10.2"/><path d="M6.3 4.3V2.9h3.4v1.4"/><path d="M4.4 4.3l.6 8.2c0 .5.4.9.9.9h3.2c.5 0 .9-.4.9-.9l.6-8.2"/></svg>
+          </span>
+        </div>
+      </article>
+
+      <article class="note t-rose">
+        <div class="kickerline">灵感</div>
+        <p class="body">把发布流程画成一张图：Skill → 插件 → DSH → GitHub → X。</p>
+        <div class="foot">
+          <span class="time">35 分钟前</span>
+          <span class="actions">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.7 2.2 13.8 6.3l-1.6.5-2.2 2.2-.4 2.6-4.9-4.9 2.6-.4 2.2-2.2z"/><path d="m5.6 10.4-3.3 3.3"/></svg>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.4c3.1 0 5.6 2.2 5.6 4.9 0 1.4-1.1 2.3-2.5 2.3H9.9c-.8 0-1.4.6-1.4 1.4 0 .4.1.6.1 1 0 .9-.7 1.4-1.6 1.4-3 0-5-2.4-5-5.2S4.9 2.4 8 2.4Z"/><circle cx="5.9" cy="7.1" r=".75" fill="currentColor" stroke="none"/><circle cx="8.4" cy="5.4" r=".75" fill="currentColor" stroke="none"/><circle cx="10.9" cy="7.1" r=".75" fill="currentColor" stroke="none"/></svg>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.9 4.3h10.2"/><path d="M6.3 4.3V2.9h3.4v1.4"/><path d="M4.4 4.3l.6 8.2c0 .5.4.9.9.9h3.2c.5 0 .9-.4.9-.9l.6-8.2"/></svg>
+          </span>
+        </div>
+      </article>
+
+      <article class="note t-lime">
+        <div class="kicker-row">
+          <div class="kickerline">待办</div>
+          <span class="progress">1/3</span>
+        </div>
+        <div class="note-todos">
+          <div class="note-todo">
+            <span class="note-check is-checked"><svg width="9" height="9" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2.4 6.3 4.8 8.7 9.7 3.2"/></svg></span>
+            <span class="todo-text is-done">写完 v1.1 的 release notes</span>
+          </div>
+          <div class="note-todo">
+            <span class="note-check"></span>
+            <span class="todo-text">补两张截图</span>
+          </div>
+          <div class="note-todo">
+            <span class="note-check"></span>
+            <span class="todo-text">更新 README 的发布说明</span>
+          </div>
+        </div>
+        <div class="foot">
+          <span class="time">1 小时前</span>
+          <span class="actions">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.7 2.2 13.8 6.3l-1.6.5-2.2 2.2-.4 2.6-4.9-4.9 2.6-.4 2.2-2.2z"/><path d="m5.6 10.4-3.3 3.3"/></svg>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.4c3.1 0 5.6 2.2 5.6 4.9 0 1.4-1.1 2.3-2.5 2.3H9.9c-.8 0-1.4.6-1.4 1.4 0 .4.1.6.1 1 0 .9-.7 1.4-1.6 1.4-3 0-5-2.4-5-5.2S4.9 2.4 8 2.4Z"/><circle cx="5.9" cy="7.1" r=".75" fill="currentColor" stroke="none"/><circle cx="8.4" cy="5.4" r=".75" fill="currentColor" stroke="none"/><circle cx="10.9" cy="7.1" r=".75" fill="currentColor" stroke="none"/></svg>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.9 4.3h10.2"/><path d="M6.3 4.3V2.9h3.4v1.4"/><path d="M4.4 4.3l.6 8.2c0 .5.4.9.9.9h3.2c.5 0 .9-.4.9-.9l.6-8.2"/></svg>
+          </span>
+        </div>
+      </article>
+
+      <article class="note t-plain">
+        <div class="kickerline">旅行</div>
+        <p class="body">京都：早上七点的鸭川，带一杯便利店咖啡。</p>
+        <div class="foot">
+          <span class="time">2 小时前</span>
+          <span class="actions">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.7 2.2 13.8 6.3l-1.6.5-2.2 2.2-.4 2.6-4.9-4.9 2.6-.4 2.2-2.2z"/><path d="m5.6 10.4-3.3 3.3"/></svg>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.4c3.1 0 5.6 2.2 5.6 4.9 0 1.4-1.1 2.3-2.5 2.3H9.9c-.8 0-1.4.6-1.4 1.4 0 .4.1.6.1 1 0 .9-.7 1.4-1.6 1.4-3 0-5-2.4-5-5.2S4.9 2.4 8 2.4Z"/><circle cx="5.9" cy="7.1" r=".75" fill="currentColor" stroke="none"/><circle cx="8.4" cy="5.4" r=".75" fill="currentColor" stroke="none"/><circle cx="10.9" cy="7.1" r=".75" fill="currentColor" stroke="none"/></svg>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.9 4.3h10.2"/><path d="M6.3 4.3V2.9h3.4v1.4"/><path d="M4.4 4.3l.6 8.2c0 .5.4.9.9.9h3.2c.5 0 .9-.4.9-.9l.6-8.2"/></svg>
+          </span>
+        </div>
+      </article>
+
+      <article class="note t-coral">
+        <div class="kickerline">摘录</div>
+        <p class="body">「好的工具应该消失在使用里。」</p>
+        <div class="foot">
+          <span class="time">3 小时前</span>
+          <span class="actions">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.7 2.2 13.8 6.3l-1.6.5-2.2 2.2-.4 2.6-4.9-4.9 2.6-.4 2.2-2.2z"/><path d="m5.6 10.4-3.3 3.3"/></svg>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.4c3.1 0 5.6 2.2 5.6 4.9 0 1.4-1.1 2.3-2.5 2.3H9.9c-.8 0-1.4.6-1.4 1.4 0 .4.1.6.1 1 0 .9-.7 1.4-1.6 1.4-3 0-5-2.4-5-5.2S4.9 2.4 8 2.4Z"/><circle cx="5.9" cy="7.1" r=".75" fill="currentColor" stroke="none"/><circle cx="8.4" cy="5.4" r=".75" fill="currentColor" stroke="none"/><circle cx="10.9" cy="7.1" r=".75" fill="currentColor" stroke="none"/></svg>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.9 4.3h10.2"/><path d="M6.3 4.3V2.9h3.4v1.4"/><path d="M4.4 4.3l.6 8.2c0 .5.4.9.9.9h3.2c.5 0 .9-.4.9-.9l.6-8.2"/></svg>
+          </span>
+        </div>
+      </article>
+
+      <article class="note t-amber">
+        <div class="kickerline">产品想法</div>
+        <p class="body">给每张便签一个分类，像书脊上的标签。</p>
+        <div class="foot">
+          <span class="time">5 小时前</span>
+          <span class="actions">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.7 2.2 13.8 6.3l-1.6.5-2.2 2.2-.4 2.6-4.9-4.9 2.6-.4 2.2-2.2z"/><path d="m5.6 10.4-3.3 3.3"/></svg>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.4c3.1 0 5.6 2.2 5.6 4.9 0 1.4-1.1 2.3-2.5 2.3H9.9c-.8 0-1.4.6-1.4 1.4 0 .4.1.6.1 1 0 .9-.7 1.4-1.6 1.4-3 0-5-2.4-5-5.2S4.9 2.4 8 2.4Z"/><circle cx="5.9" cy="7.1" r=".75" fill="currentColor" stroke="none"/><circle cx="8.4" cy="5.4" r=".75" fill="currentColor" stroke="none"/><circle cx="10.9" cy="7.1" r=".75" fill="currentColor" stroke="none"/></svg>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.9 4.3h10.2"/><path d="M6.3 4.3V2.9h3.4v1.4"/><path d="M4.4 4.3l.6 8.2c0 .5.4.9.9.9h3.2c.5 0 .9-.4.9-.9l.6-8.2"/></svg>
+          </span>
+        </div>
+      </article>
+
+      <article class="note t-sky">
+        <div class="kickerline">个人</div>
+        <p class="body">周末把桌面清空一次，只留正在做的三件事。</p>
+        <div class="foot">
+          <span class="time">8 小时前</span>
+          <span class="actions">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.7 2.2 13.8 6.3l-1.6.5-2.2 2.2-.4 2.6-4.9-4.9 2.6-.4 2.2-2.2z"/><path d="m5.6 10.4-3.3 3.3"/></svg>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.4c3.1 0 5.6 2.2 5.6 4.9 0 1.4-1.1 2.3-2.5 2.3H9.9c-.8 0-1.4.6-1.4 1.4 0 .4.1.6.1 1 0 .9-.7 1.4-1.6 1.4-3 0-5-2.4-5-5.2S4.9 2.4 8 2.4Z"/><circle cx="5.9" cy="7.1" r=".75" fill="currentColor" stroke="none"/><circle cx="8.4" cy="5.4" r=".75" fill="currentColor" stroke="none"/><circle cx="10.9" cy="7.1" r=".75" fill="currentColor" stroke="none"/></svg>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.9 4.3h10.2"/><path d="M6.3 4.3V2.9h3.4v1.4"/><path d="M4.4 4.3l.6 8.2c0 .5.4.9.9.9h3.2c.5 0 .9-.4.9-.9l.6-8.2"/></svg>
+          </span>
+        </div>
+      </article>
+
+      <article class="note t-violet">
+        <div class="kickerline">灵感</div>
+        <p class="body">便签墙可以有一个「今天」视图：只看今天贴的。</p>
+        <div class="foot">
+          <span class="time">10 小时前</span>
+          <span class="actions">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.7 2.2 13.8 6.3l-1.6.5-2.2 2.2-.4 2.6-4.9-4.9 2.6-.4 2.2-2.2z"/><path d="m5.6 10.4-3.3 3.3"/></svg>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.4c3.1 0 5.6 2.2 5.6 4.9 0 1.4-1.1 2.3-2.5 2.3H9.9c-.8 0-1.4.6-1.4 1.4 0 .4.1.6.1 1 0 .9-.7 1.4-1.6 1.4-3 0-5-2.4-5-5.2S4.9 2.4 8 2.4Z"/><circle cx="5.9" cy="7.1" r=".75" fill="currentColor" stroke="none"/><circle cx="8.4" cy="5.4" r=".75" fill="currentColor" stroke="none"/><circle cx="10.9" cy="7.1" r=".75" fill="currentColor" stroke="none"/></svg>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.9 4.3h10.2"/><path d="M6.3 4.3V2.9h3.4v1.4"/><path d="M4.4 4.3l.6 8.2c0 .5.4.9.9.9h3.2c.5 0 .9-.4.9-.9l.6-8.2"/></svg>
+          </span>
+        </div>
+      </article>
+    </div>
+
+  </div>
+</div>
+<script>
+  const EN = {
+    '便签墙': 'Sticky Wall',
+    '记下每个想法，自动保存在本机': 'Capture every idea. Your notes save automatically.',
+    '搜索便签': 'Search notes',
+    '12 张便签': '12 notes',
+    '记下你的下一个想法…': 'Write down your next idea…',
+    '待办': 'To-do',
+    '分类（可选）': 'Category',
+    '贴上墙': 'Add to wall',
+    '全部': 'All',
+    '产品想法': 'Product idea',
+    '个人': 'Personal',
+    '灵感': 'Inspiration',
+    '下一个插件': 'Next plugin',
+    '阅读': 'Reading',
+    '旅行': 'Travel',
+    '摘录': 'Quote',
+    '今天': 'Today',
+    '如果想法都有一个落脚点？不用打开文档，也不用想放在哪。': 'What if ideas had a place to land? No docs, no deciding where to put them.',
+    '刚刚': 'just now',
+    '试试一个更安静的早晨：七点起床，先不看手机。': 'Try a quieter morning: up at seven, phone stays off for a while.',
+    '3 分钟前': '3 min ago',
+    '一键完成日常工作的工具。': 'One-click tools for everyday work.',
+    '8 分钟前': '8 min ago',
+    '《设计中的设计》第三章：留白不是空的，是让视线有地方停。': '“Designing Design”, chapter 3: white space is not empty — it gives the eye a place to rest.',
+    '12 分钟前': '12 min ago',
+    '便签要能被 agent 读到——在对话里说「记到便签墙」，它就该出现在这里。': 'A note the agent can read — say “put it on the wall” in chat and it lands here.',
+    '20 分钟前': '20 min ago',
+    '把发布流程画成一张图：Skill → 插件 → DSH → GitHub → X。': 'Draw the release flow as one diagram: Skill → plugin → DSH → GitHub → X.',
+    '35 分钟前': '35 min ago',
+    '写完 v1.1 的 release notes': 'Finish the v1.1 release notes',
+    '补两张截图': 'Add two screenshots',
+    '更新 README 的发布说明': 'Update the README release notes',
+    '1 小时前': '1 h ago',
+    '京都：早上七点的鸭川，带一杯便利店咖啡。': 'Kyoto: the Kamo River at seven in the morning, with a convenience-store coffee.',
+    '2 小时前': '2 h ago',
+    '「好的工具应该消失在使用里。」': '“Good tools should disappear into use.”',
+    '3 小时前': '3 h ago',
+    '给每张便签一个分类，像书脊上的标签。': 'Give every note a category, like a label on a book spine.',
+    '5 小时前': '5 h ago',
+    '周末把桌面清空一次，只留正在做的三件事。': 'Clear the desk once this weekend; keep only the three things in flight.',
+    '8 小时前': '8 h ago',
+    '便签墙可以有一个「今天」视图：只看今天贴的。': 'The wall could have a “Today” view: only what was posted today.',
+    '10 小时前': '10 h ago',
+  };
+
+  if (new URLSearchParams(location.search).get('lang') === 'en') {
+    const skip = new Set(['SCRIPT', 'STYLE']);
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walker.nextNode()) {
+      const parent = walker.currentNode.parentElement;
+      if (parent !== null && !skip.has(parent.tagName)) nodes.push(walker.currentNode);
+    }
+    for (const node of nodes) {
+      const key = node.nodeValue.trim();
+      if (EN[key] !== undefined) node.nodeValue = node.nodeValue.replace(key, EN[key]);
+    }
+    document.documentElement.lang = 'en';
+    document.title = 'Sticky Wall · design preview';
+  }
+
+  if (new URLSearchParams(location.search).get('theme') === 'dark') document.body.classList.add('dark');
+
+  // 用正文派生确定的角度与上下偏移，和插件里的 tiltOf 一样：像手贴上去的。
+  for (const el of document.querySelectorAll('.note')) {
+    const text = (el.querySelector('.body') || {}).textContent || String(Math.random());
+    let hash = 0;
+    for (let index = 0; index < text.length; index += 1) hash = (hash * 31 + text.charCodeAt(index)) % 100003;
+    const angle = ((hash % 241) - 120) / 120;
+    const shift = (Math.floor(hash / 7) % 5) - 2;
+    el.style.setProperty('--rot', (Math.round(angle * 1.6 * 100) / 100) + 'deg');
+    el.style.setProperty('--y', shift + 'px');
+  }
+</script>
+</body>
+</html>

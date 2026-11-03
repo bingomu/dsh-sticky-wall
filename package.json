@@ -1,0 +1,76 @@
+{
+  "name": "dsh-sticky-wall",
+  "version": "1.0.0",
+  "description": "便签墙：一面可以随手贴、分类、归档、变成待办，并让 agent 直接读写的便签墙。",
+  "type": "module",
+  "license": "MIT",
+  "author": {
+    "name": "Genzo",
+    "email": "robinham@gmail.com",
+    "url": "https://x.com/robinham"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bingomu/dsh-sticky-wall.git"
+  },
+  "homepage": "https://github.com/bingomu/dsh-sticky-wall#readme",
+  "bugs": {
+    "url": "https://github.com/bingomu/dsh-sticky-wall/issues"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "sticky-notes",
+    "notes",
+    "todo",
+    "wall"
+  ],
+  "engines": {
+    "node": ">=22",
+    "dsh": ">=0.2.1-rc.2 <0.3.0-0"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "lib",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "check": "node --check index.js && node --check client.js && node --check lib/store.js && node --check lib/routes.js && node --check lib/tools.js",
+    "test": "node --test tests/store.test.mjs tests/routes.test.mjs tests/tools.test.mjs",
+    "prepublishOnly": "npm run check && npm test"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-locale"
+      ]
+    },
+    "compatibility": {
+      "dshReleases": {
+        "0.2.1-rc.2": "compatible",
+        "0.2.1-rc.5": "compatible"
+      }
+    }
+  }
+}

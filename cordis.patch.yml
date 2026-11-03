@@ -1,0 +1,7 @@
+# 便签墙：一个「Host 路由 + 浏览器面板」插件。
+# Host 半侧（index.js）把便签保存在本机 JSON 文件里，提供 /dsh-sticky-wall/api 路由，
+# 并注册 sticky_wall_add / sticky_wall_list / sticky_wall_remove 三个 agent 工具；
+# 浏览器半侧（client.js）在左侧边栏常驻一个入口，打开 main 面板里的便签墙。
+- insert:
+    - id: dsh-sticky-wall
+      name: 'dsh-sticky-wall'
