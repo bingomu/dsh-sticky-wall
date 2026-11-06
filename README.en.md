@@ -16,7 +16,8 @@ read and write the wall through tools.
 
 - **Sidebar entry**: a sticky-note icon in the left rail opens the wall in the main panel.
 - **Composer**: one warm-yellow paper card; write a line and press `⌘/Ctrl + Enter` (or “Add to wall”).
-  Nine paper colors, optional category.
+  Nine paper colors, optional category. Each new note picks a fresh random color; a manually
+  picked color applies to the current note only.
 - **To-dos**: the “To-do” toggle at the bottom of the composer turns a new note into a checklist —
   one item per line, with checkboxes and progress. Switch between note and to-do in edit mode.
   Checked state uses stable item ids, so inserting, reordering or rewording keeps it.

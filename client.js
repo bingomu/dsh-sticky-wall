@@ -522,6 +522,12 @@ window.__ModuleLoader__.load({
 
     /* ---------------------------------------------------------------- 便签 */
 
+    /** 随机取一个纸色；尽量不和上一张重复。 */
+    function randomColor(except) {
+      const pool = COLORS.filter((color) => color !== except);
+      return pool[Math.floor(Math.random() * pool.length)] ?? 'amber';
+    }
+
     /** 待办项：正文按行拆，忽略空行。 */
     function todoItems(text) {
       return String(text ?? '').split('\n').map((line) => line.trim()).filter((line) => line !== '');
@@ -775,7 +781,7 @@ window.__ModuleLoader__.load({
       const [notice, setNotice] = React.useState('');
       const [draft, setDraft] = React.useState('');
       const [draftCategory, setDraftCategory] = React.useState('');
-      const [draftColor, setDraftColor] = React.useState('amber');
+      const [draftColor, setDraftColor] = React.useState(() => randomColor());
       const [draftKind, setDraftKind] = React.useState('note');
       const [query, setQuery] = React.useState('');
       const [editingId, setEditingId] = React.useState(null);
@@ -874,6 +880,8 @@ window.__ModuleLoader__.load({
         if (ok) {
           setDraft('');
           setDraftCategory('');
+          // 下一张重新随机：默认不再永远停在同一个颜色；本次手动选的颜色仍然生效。
+          setDraftColor((current) => randomColor(current));
           try { field.current?.focus(); } catch { /* 已卸载 */ }
         }
       };
