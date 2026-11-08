@@ -7,6 +7,8 @@ DSH（DeepSeek Harness）会话界面插件：**左侧边栏常驻一面便签�
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/bingomu/dsh-sticky-wall/blob/main/LICENSE)
 [English](README.en.md)
 
+![便签墙 · Sticky Wall](https://raw.githubusercontent.com/bingomu/dsh-sticky-wall/main/assets/hero-zh-1200x630.png)
+
 | 便签墙总览 | 输入 + 待办 |
 |---|---|
 | ![便签墙总览](https://raw.githubusercontent.com/bingomu/dsh-sticky-wall/main/assets/shot-wall-overview.png) | ![输入与待办](https://raw.githubusercontent.com/bingomu/dsh-sticky-wall/main/assets/shot-wall-composer.png) |

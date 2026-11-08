@@ -8,6 +8,8 @@ read and write the wall through tools.
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/bingomu/dsh-sticky-wall/blob/main/LICENSE)
 [中文](README.md)
 
+![Sticky Wall](https://raw.githubusercontent.com/bingomu/dsh-sticky-wall/main/assets/hero-en-1200x630.png)
+
 | The wall | Composer + to-do |
 |---|---|
 | ![The wall](https://raw.githubusercontent.com/bingomu/dsh-sticky-wall/main/assets/shot-wall-overview.png) | ![Composer and to-do](https://raw.githubusercontent.com/bingomu/dsh-sticky-wall/main/assets/shot-wall-composer.png) |
