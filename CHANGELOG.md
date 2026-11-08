@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.1 — 2026-11-07
+
+- 市场与 README 的配图换成 4 张真实 DSH 界面截图（总览 / 输入与待办 / 搜索 / 分类筛选），不再用设计稿。
+- 安装命令改为 `releases/latest/download/dsh-sticky-wall.tgz`，不再指向过期的 v1.0.0 源码包。
+- `screenshots.json` 指向 4 张新截图；发布包里补上 `README.en.md`、`assets/`、`screenshots.json`。
+
 ## 1.1.0 — 2026-11-06
 
 - 新建便签的纸色改为随机：打开面板和每次贴上墙后都会换一个（不与上一张重复）；

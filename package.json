@@ -1,6 +1,6 @@
 {
   "name": "dsh-sticky-wall",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "便签墙：一面可以随手贴、分类、归档、变成待办，并让 agent 直接读写的便签墙。",
   "type": "module",
   "license": "MIT",
@@ -45,7 +45,10 @@
     "icon.svg",
     "README.md",
     "LICENSE",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "assets",
+    "screenshots.json",
+    "README.en.md"
   ],
   "scripts": {
     "check": "node --check index.js && node --check client.js && node --check lib/store.js && node --check lib/routes.js && node --check lib/tools.js",

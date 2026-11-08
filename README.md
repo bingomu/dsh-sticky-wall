@@ -7,9 +7,13 @@ DSH（DeepSeek Harness）会话界面插件：**左侧边栏常驻一面便签�
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/bingomu/dsh-sticky-wall/blob/main/LICENSE)
 [English](README.en.md)
 
-![便签墙 · 亮色](https://raw.githubusercontent.com/bingomu/dsh-sticky-wall/main/design/demo-zh-light.png)
+| 便签墙总览 | 输入 + 待办 |
+|---|---|
+| ![便签墙总览](https://raw.githubusercontent.com/bingomu/dsh-sticky-wall/main/assets/shot-wall-overview.png) | ![输入与待办](https://raw.githubusercontent.com/bingomu/dsh-sticky-wall/main/assets/shot-wall-composer.png) |
+| **搜索**：按文字过滤整面墙 | **分类筛选**：点 chips 只看一类 |
+| ![搜索](https://raw.githubusercontent.com/bingomu/dsh-sticky-wall/main/assets/shot-wall-search.png) | ![分类筛选](https://raw.githubusercontent.com/bingomu/dsh-sticky-wall/main/assets/shot-wall-filter.png) |
 
-> 界面预览；暗色版见 [`design/demo-zh-dark.png`](https://github.com/bingomu/dsh-sticky-wall/blob/main/design/demo-zh-dark.png)。
+> 四张都是真实 DSH 界面截图（演示数据），不是设计稿。
 
 ## 功能
 
@@ -31,7 +35,7 @@ DSH（DeepSeek Harness）会话界面插件：**左侧边栏常驻一面便签�
 需要 DSH `0.2.1-rc.2` 及以上（已在 `0.2.1-rc.5` 测试）。本插件通过 GitHub 发布：
 
 ```bash
-dsh plugin --profile <你的 profile> add https://github.com/bingomu/dsh-sticky-wall/archive/refs/tags/v1.0.0.tar.gz
+dsh plugin --profile <你的 profile> add https://github.com/bingomu/dsh-sticky-wall/releases/latest/download/dsh-sticky-wall.tgz
 ```
 
 也可以打开 DSH 设置 → 插件，用「安装」入口填这个 tarball URL。安装后**重启 DSH 并刷新页面**，

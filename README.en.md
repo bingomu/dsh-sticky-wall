@@ -8,9 +8,13 @@ read and write the wall through tools.
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/bingomu/dsh-sticky-wall/blob/main/LICENSE)
 [中文](README.md)
 
-![Sticky Wall · light](https://raw.githubusercontent.com/bingomu/dsh-sticky-wall/main/design/demo-en-light.png)
+| The wall | Composer + to-do |
+|---|---|
+| ![The wall](https://raw.githubusercontent.com/bingomu/dsh-sticky-wall/main/assets/shot-wall-overview.png) | ![Composer and to-do](https://raw.githubusercontent.com/bingomu/dsh-sticky-wall/main/assets/shot-wall-composer.png) |
+| **Search** filters the whole wall | **Category chips** narrow it to one list |
+| ![Search](https://raw.githubusercontent.com/bingomu/dsh-sticky-wall/main/assets/shot-wall-search.png) | ![Category filter](https://raw.githubusercontent.com/bingomu/dsh-sticky-wall/main/assets/shot-wall-filter.png) |
 
-> Interface preview; the dark version is [`design/demo-en-dark.png`](https://github.com/bingomu/dsh-sticky-wall/blob/main/design/demo-en-dark.png).
+> All four are real DSH screenshots (demo data), not design mockups.
 
 ## Features
 
@@ -35,7 +39,7 @@ read and write the wall through tools.
 Requires DSH `0.2.1-rc.2` or newer (tested on `0.2.1-rc.5`). The plugin is distributed via GitHub:
 
 ```bash
-dsh plugin --profile <your-profile> add https://github.com/bingomu/dsh-sticky-wall/archive/refs/tags/v1.0.0.tar.gz
+dsh plugin --profile <your-profile> add https://github.com/bingomu/dsh-sticky-wall/releases/latest/download/dsh-sticky-wall.tgz
 ```
 
 You can also open DSH Settings → Plugins and install from that tarball URL. After installing,

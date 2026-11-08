@@ -1,8 +1,6 @@
-{
-  "screenshots": [
-    "design/demo-zh-light.png",
-    "design/demo-zh-dark.png",
-    "design/demo-en-light.png",
-    "design/demo-en-dark.png"
-  ]
-}
+[
+  "assets/shot-wall-overview.png",
+  "assets/shot-wall-composer.png",
+  "assets/shot-wall-search.png",
+  "assets/shot-wall-filter.png"
+]
